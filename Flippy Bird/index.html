@@ -31,7 +31,6 @@
         .pipe {
             position: absolute;
             width: 3rem;
-            height: 20rem;
         }
         .pipe-top {
             top: 0;
@@ -42,7 +41,7 @@
             right: -10%;
         }
         .pipe {
-            animation: movePipe 4s linear infinite;
+            animation: movePipe 4.3s linear infinite;
         }
         .pause-menu, .game-over {
             display: none;
@@ -61,19 +60,68 @@
                 left: 100%;
             }
             100% {
-                left: -5rem;
+                left: -65%;
             }
         }
         .pipe {
-    animation: movePipe 4s linear infinite;
+    animation: movePipe 16s linear infinite;
 }
+@media (max-width: 1198px) {
+    @keyframes movePipe {
+        0% {
+            left: 150%;
+        }
+        100% {
+            left: -120%; /* Make sure pipes fully exit the screen */
+        }
+    }
+
+    .pipe {
+        animation-duration: 10s; /* Adjust speed for smaller screens */
+    }
+}
+.score {
+    position: absolute;
+    font-size: 24px;
+    color: white;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-weight: bold;
+}
+
     </style>
 </head>
 <body>
     <div class="game-play">
+        <div class="score" id="score-game-play"
+        style="
+        position: absolute;
+        font-size: 24px;
+        right: 0rem;
+        top:0rem;
+        /* transform: translate(-); */
+        color: white;
+        background: rgba(0, 0, 0, 0.5);
+        padding: 10px 20px;
+        border-radius: 10px;
+        font-weight: bold;
+        ">
+        </div>
         <img src="./img/Red_bird.png" alt="Bird" class="bird" id="bird">
+
         <img class="pipe pipe-top" src="./img/PipeGreen.png" alt="" style="height: 17rem; top: 0; position: absolute;">
         <img class="pipe pipe-bottom" src="./img/PipRed.png" alt="" style="bottom: 0; position: absolute;">
+        <img class="pipe pipe-top" src="./img/PipeGreen.png" alt="" style="height: 21rem; top: 0; position: absolute;margin-left:220px;">
+        <img class="pipe pipe-bottom" src="./img/PipRed.png" alt="" style="bottom: 0; height: 14rem; position: absolute;margin-left:210px;">
+        <img class="pipe pipe-top" src="./img/PipeGreen.png" alt="" style="height: 17rem; top: 0; position: absolute;margin-left:420px;">
+        <img class="pipe pipe-bottom" src="./img/PipRed.png" alt="" style="bottom: 0; position: absolute; margin-left:410px;">
+        <img class="pipe pipe-top" src="./img/PipeGreen.png" alt="" style="height: 17rem; top: 0; position: absolute; margin-left:610px;">
+        <img class="pipe pipe-bottom" src="./img/PipRed.png" alt="" style="bottom: 0; position: absolute;margin-left:610px;" >
+        <img class="pipe pipe-top" src="./img/PipeGreen.png" alt="" style="height: 21rem; top: 0; position: absolute;margin-left:820px;">
+        <img class="pipe pipe-bottom" src="./img/PipRed.png" alt="" style="bottom: 0; height: 14rem; position: absolute;margin-left:810px;">
+        <img class="pipe pipe-top" src="./img/PipeGreen.png" alt="" style="height: 17rem; top: 0; position: absolute;margin-left:1020px;">
+        <img class="pipe pipe-bottom" src="./img/PipRed.png" alt="" style="bottom: 0; position: absolute; margin-left:1010px;">
     </div>
     <div class="pause-menu">
         <p>Game Paused</p>
@@ -81,39 +129,52 @@
         <button id="exit-btn">Exit</button>
     </div>
     <div class="game-over">
+        <div class="score" id="score-game-over" style="position: relative;">Score: 0</div>
         Game Over! Press <span id="restart-text">R</span> to Restart or <span id="exit-text">E</span> to Exit
     </div>
     <audio id="background-music" src="./youtube_vJwKKKd2ZYE_audio.mp3" loop></audio>
     <script>
-const sound = document.getElementById('background-music');
-
-function controlMusic() {
-    if (isPaused || isGameOver) {
-        sound.pause();
-    } else {
-        sound.play();
-    }
-}
-
-// Ensure sound starts only after user interaction
-document.addEventListener('keydown', function(event) {
-    if (event.code === 'Space' && !isPaused && !isGameOver) {
-        sound.play(); // Start background music when the player starts moving
-    }
-});
-
+        const sound = document.getElementById('background-music');
+        
+        function controlMusic() {
+            if (isPaused || isGameOver) {
+                sound.pause();
+            } else {
+                sound.play();
+            }
+        }
+        
+        // Ensure sound starts only after user interaction
+        document.addEventListener('keydown', function(event) {
+            if (event.code === 'Space' && !isPaused && !isGameOver) {
+                sound.play(); // Start background music when the player starts moving
+            }
+        });
+        
         const bird = document.querySelector('.bird');
         const pipes = document.querySelectorAll('.pipe');
         let birdTop = window.innerHeight / 2; // Start at the center of the screen
         let velocityY = 0;
         const gravity = 0.2;  // Default gravity value
         let currentGravity = gravity; // This allows for slower gravity on restart
-        let lift = -4.2;
+        let lift = -4;
         const minTop = 0;
         const maxTop = 700 - bird.clientHeight;
-
+    
         let isGameOver = false;
         let isPaused = false;
+    
+        let InOverScore = 0;
+        let InGamePlayScore = 0;
+        const scoreElementGamePlay = document.getElementById('score-game-play');
+        const scoreElementGameOver = document.getElementById('score-game-over');
+    
+        function updateScore() {
+            InOverScore++;
+            InGamePlayScore = InOverScore;
+            scoreElementGamePlay.innerText = "Score: " + InGamePlayScore;
+            scoreElementGameOver.innerText = "Score: " + InOverScore;
+        }
     
         function applyGravity() {
             velocityY += currentGravity; // Apply gravity to the vertical velocity
@@ -166,7 +227,6 @@ document.addEventListener('keydown', function(event) {
                 document.querySelector('.pause-menu').style.display = 'none';
                 requestAnimationFrame(updatePosition); // Resume the game and bird's movement
                 startPipes(); // Resume pipes animation
-                
             } else {
                 isPaused = true;
                 document.querySelector('.pause-menu').style.display = 'block';
@@ -176,36 +236,40 @@ document.addEventListener('keydown', function(event) {
         }
     
         function restartGame() {
-    isGameOver = false;
-    birdLeft = 0; // Reset bird's horizontal position to the left
-    birdTop = window.innerHeight / 2; // Reset bird to center vertically
-    velocityY = 0; // Reset bird's vertical speed
-    currentGravity = gravity; // Reset gravity
-
-    document.querySelector('.game-over').style.display = 'none';
-
-    resetPipes(); // Reset pipe positions
-
-    applyGravity(); // Restart gravity effect
-    requestAnimationFrame(updatePosition); 
-    controlMusic();// Resume bird movement
-}
-function resetPipes() {
-    pipes.forEach(pipe => {
-        if (pipe.classList.contains('pipe-top')) {
-            pipe.style.top = '0'; // Ensure pipe-top starts at the top
-            pipe.style.right = '-10%'; // Reset right position
-        } else if (pipe.classList.contains('pipe-bottom')) {
-            pipe.style.bottom = '0'; // Ensure pipe-bottom starts at the bottom
-            pipe.style.right = '-10%'; // Reset right position
+            isGameOver = false;
+            birdTop = window.innerHeight / 2; // Reset bird to center vertically
+            velocityY = 0; // Reset bird's vertical speed
+            currentGravity = gravity; // Reset gravity
+            InGamePlayScore = 0; // Reset score
+            InOverScore = 0;
+            scoreElementGamePlay.innerText = "Score: 0"; // Update displayed score
+            scoreElementGameOver.innerText = "Score: 0";
+            document.querySelector('.game-over').style.display = 'none';
+    
+            resetPipes(); // Reset pipe positions
+            applyGravity(); // Restart gravity effect
+            requestAnimationFrame(updatePosition); 
+            controlMusic(); // Resume bird movement
         }
-
-        pipe.style.animation = 'none'; // Stop animation temporarily
-        setTimeout(() => {
-            pipe.style.animation = 'movePipe 4s linear infinite'; // Restart pipe animation smoothly
-        }, 500);
-    });
-}
+    
+        function resetPipes() {
+            pipes.forEach(pipe => {
+                if (pipe.classList.contains('pipe-top')) {
+                    pipe.style.top = '0'; // Ensure pipe-top starts at the top
+                    pipe.style.right = '-10%'; // Reset right position
+                } else if (pipe.classList.contains('pipe-bottom')) {
+                    pipe.style.bottom = '0'; // Ensure pipe-bottom starts at the bottom
+                    pipe.style.right = '-10%'; // Reset right position
+                }
+    
+                pipe.style.animation = 'none'; // Stop animation temporarily
+                pipe.scored = false; // Reset the scored flag
+                setTimeout(() => {
+                    pipe.style.animation = 'movePipe 16s linear infinite'; // Restart pipe animation smoothly
+                }, 500);
+            });
+        }
+    
         function stopPipes() {
             pipes.forEach(pipe => {
                 pipe.style.animationPlayState = 'paused'; // Pause pipe animations when paused
@@ -220,7 +284,9 @@ function resetPipes() {
     
         function checkCollision() {
             const birdRect = bird.getBoundingClientRect();
-            for (let pipe of pipes) {
+            let passedPipe = false;
+    
+            pipes.forEach(pipe => {
                 const pipeRect = pipe.getBoundingClientRect();
                 if (
                     birdRect.left < pipeRect.left + pipeRect.width &&
@@ -231,13 +297,22 @@ function resetPipes() {
                     gameOver(); // Trigger game over if collision occurs
                     return true;
                 }
+    
+                if (!pipe.scored && birdRect.left > pipeRect.left + pipeRect.width) {
+                    pipe.scored = true;
+                    passedPipe = true;
+                }
+            });
+    
+            if (passedPipe) {
+                updateScore();
             }
+    
             return false;
         }
     
         // Start the smooth animation loop
         requestAnimationFrame(updatePosition);    
-    
         // Event listeners for pause menu buttons
         document.getElementById('continue-btn').addEventListener('click', function() {
             togglePause(); // Toggle pause when continue button is pressed
