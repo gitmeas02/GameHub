@@ -4,8 +4,278 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Project1 2D Game Play</title>
+    <style>
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            height: 100vh;
+            overflow: hidden;
+        }
+        .game-play {
+            position: relative;
+            width: 100%;
+            height: 700px;
+            background: url("./img/LightBackground.png");
+            background-size: contain;
+            overflow: hidden;
+        }
+        .bird {
+            width: 3.6rem;
+            position: absolute;
+            top: 50%;
+            left: 33%;
+            transform: translate(-50%, -50%);
+        }
+        .pipe {
+            position: absolute;
+            width: 3rem;
+            height: 20rem;
+        }
+        .pipe-top {
+            top: 0;
+            right: -10%;
+        }
+        .pipe-bottom {
+            bottom: 0;
+            right: -10%;
+        }
+        .pipe {
+            animation: movePipe 4s linear infinite;
+        }
+        .pause-menu, .game-over {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left:50%;
+            transform: translate(-50%,-50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 10px;
+        }
+        @keyframes movePipe {
+            0% {
+                left: 100%;
+            }
+            100% {
+                left: -5rem;
+            }
+        }
+        .pipe {
+    animation: movePipe 4s linear infinite;
+}
+    </style>
 </head>
 <body>
+    <div class="game-play">
+        <img src="./img/Red_bird.png" alt="Bird" class="bird" id="bird">
+        <img class="pipe pipe-top" src="./img/PipeGreen.png" alt="" style="height: 17rem; top: 0; position: absolute;">
+        <img class="pipe pipe-bottom" src="./img/PipRed.png" alt="" style="bottom: 0; position: absolute;">
+    </div>
+    <div class="pause-menu">
+        <p>Game Paused</p>
+        <button id="continue-btn">Continue</button>
+        <button id="exit-btn">Exit</button>
+    </div>
+    <div class="game-over">
+        Game Over! Press <span id="restart-text">R</span> to Restart or <span id="exit-text">E</span> to Exit
+    </div>
+    <audio id="background-music" src="./youtube_vJwKKKd2ZYE_audio.mp3" loop></audio>
+    <script>
+const sound = document.getElementById('background-music');
+
+function controlMusic() {
+    if (isPaused || isGameOver) {
+        sound.pause();
+    } else {
+        sound.play();
+    }
+}
+
+// Ensure sound starts only after user interaction
+document.addEventListener('keydown', function(event) {
+    if (event.code === 'Space' && !isPaused && !isGameOver) {
+        sound.play(); // Start background music when the player starts moving
+    }
+});
+
+        const bird = document.querySelector('.bird');
+        const pipes = document.querySelectorAll('.pipe');
+        let birdTop = window.innerHeight / 2; // Start at the center of the screen
+        let velocityY = 0;
+        const gravity = 0.05;  // Default gravity value
+        let currentGravity = gravity; // This allows for slower gravity on restart
+        let lift = -2;
+        const minLift = -4.5;
+        let lastSpacePress = 0;
+        let spacePressCount = 0; // Upward force when space is pressed
+
+        const minTop = 0;
+        const maxTop = 700 - bird.clientHeight;
+
+
+// const minTop = 0;
+// const maxTop = 700 - bird.clientHeight;
+// ```
+
+// ### Explanation:
+
+// 1. **`const minTop = 0;`**:
+//    - This sets the minimum vertical position (`minTop`) for the bird to `0`. This means the bird cannot move above the top edge of the game area.
+
+// 2. **`const maxTop = 700 - bird.clientHeight;`**:
+//    - This sets the maximum vertical position (`maxTop`) for the bird to `700 - bird.clientHeight`.
+//    - `700` is the height of the game area (as defined in the CSS for `.game-play`).
+//    - `bird.clientHeight` is the height of the bird element.
+//    - By subtracting the bird's height from the game area's height,
+//       this ensures that the bird cannot move below the bottom edge of the game area.
+
+
+
+        let isGameOver = false;
+        let isPaused = false;
     
+        function applyGravity() {
+            velocityY += currentGravity; // Apply gravity to the vertical velocity
+            birdTop += velocityY; // Update bird's vertical position based on velocityY
+    
+            if (birdTop >= maxTop) { // Prevent the bird from going below the ground
+                birdTop = maxTop;
+                velocityY = 0; // Stop falling if we reach the bottom
+                gameOver(); // Trigger game over if the bird hits the bottom
+            } else if (birdTop <= minTop) { // Prevent the bird from going above the screen
+                birdTop = minTop;
+                velocityY = 0; // Stop upwards movement if we reach the top
+            }
+        }
+    
+        function updatePosition() {
+            if (!isPaused && !isGameOver) {
+                bird.style.top = birdTop + 'px';
+                applyGravity();
+                checkCollision();
+                requestAnimationFrame(updatePosition); // Keep updating the position for smooth animation
+            }
+        }
+    
+        document.addEventListener('keydown', function(event) {
+            if (event.code === 'Space' && !isPaused && !isGameOver) {
+                const now = Date.now();
+                if(now-lastSpacePress <300){// Double space press within 300ms
+                    lift=Math.max(lift-0.02,minLift)
+                }else{
+                    lift= -2;
+                }
+                velocityY = lift; // Apply the lift when space is pressed
+                lastSpacePress = now;
+            }
+            if (event.code === 'KeyR' && isGameOver) {
+                restartGame(); // Restart the game if R is pressed and the game is over
+            }
+            if (event.code === 'KeyP') {
+                togglePause(); // Toggle pause when P is pressed
+            }
+            if (event.code === 'KeyC' && isPaused) {
+                togglePause(); // Toggle pause when C is pressed
+            }
+        });
+    
+        function gameOver() {
+            isGameOver = true;
+            document.querySelector('.game-over').style.display = 'block';
+            stopPipes(); // Stop pipes when game is over
+            controlMusic();
+        }
+    
+        function togglePause() {
+            if (isPaused) {
+                isPaused = false;
+                document.querySelector('.pause-menu').style.display = 'none';
+                requestAnimationFrame(updatePosition); // Resume the game and bird's movement
+                startPipes(); // Resume pipes animation
+                
+            } else {
+                isPaused = true;
+                document.querySelector('.pause-menu').style.display = 'block';
+                stopPipes(); // Stop pipes and bird movement when paused
+                controlMusic();
+            }
+        }
+    
+        function restartGame() {
+    isGameOver = false;
+    birdLeft = 0; // Reset bird's horizontal position to the left
+    birdTop = window.innerHeight / 2; // Reset bird to center vertically
+    velocityY = 0; // Reset bird's vertical speed
+    currentGravity = gravity; // Reset gravity
+
+    document.querySelector('.game-over').style.display = 'none';
+
+    resetPipes(); // Reset pipe positions
+
+    applyGravity(); // Restart gravity effect
+    requestAnimationFrame(updatePosition); 
+    controlMusic();// Resume bird movement
+}
+function resetPipes() {
+    pipes.forEach(pipe => {
+        if (pipe.classList.contains('pipe-top')) {
+            pipe.style.top = '0'; // Ensure pipe-top starts at the top
+            pipe.style.right = '-10%'; // Reset right position
+        } else if (pipe.classList.contains('pipe-bottom')) {
+            pipe.style.bottom = '0'; // Ensure pipe-bottom starts at the bottom
+            pipe.style.right = '-10%'; // Reset right position
+        }
+
+        pipe.style.animation = 'none'; // Stop animation temporarily
+        setTimeout(() => {
+            pipe.style.animation = 'movePipe 4s linear infinite'; // Restart pipe animation smoothly
+        }, 500);
+    });
+}
+        function stopPipes() {
+            pipes.forEach(pipe => {
+                pipe.style.animationPlayState = 'paused'; // Pause pipe animations when paused
+            });
+        }
+    
+        function startPipes() {
+            pipes.forEach(pipe => {
+                pipe.style.animationPlayState = 'running'; // Resume pipe animations when continuing
+            });
+        }
+    
+        function checkCollision() {
+            const birdRect = bird.getBoundingClientRect();
+            for (let pipe of pipes) {
+                const pipeRect = pipe.getBoundingClientRect();
+                if (
+                    birdRect.left < pipeRect.left + pipeRect.width &&
+                    birdRect.left + birdRect.width > pipeRect.left &&
+                    birdRect.top < pipeRect.top + pipeRect.height &&
+                    birdRect.top + birdRect.height > pipeRect.top
+                ) {
+                    gameOver(); // Trigger game over if collision occurs
+                    return true;
+                }
+            }
+            return false;
+        }
+    
+        // Start the smooth animation loop
+        requestAnimationFrame(updatePosition);    
+    
+        // Event listeners for pause menu buttons
+        document.getElementById('continue-btn').addEventListener('click', function() {
+            togglePause(); // Toggle pause when continue button is pressed
+        });
+        document.getElementById('exit-btn').addEventListener('click', function() {
+            // Handle exit logic here
+            console.log("Exit game logic here");
+        });
+    </script>
 </body>
 </html>
