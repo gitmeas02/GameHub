@@ -106,34 +106,11 @@ document.addEventListener('keydown', function(event) {
         const pipes = document.querySelectorAll('.pipe');
         let birdTop = window.innerHeight / 2; // Start at the center of the screen
         let velocityY = 0;
-        const gravity = 0.05;  // Default gravity value
+        const gravity = 0.2;  // Default gravity value
         let currentGravity = gravity; // This allows for slower gravity on restart
-        let lift = -2;
-        const minLift = -4.5;
-        let lastSpacePress = 0;
-        let spacePressCount = 0; // Upward force when space is pressed
-
+        let lift = -4.2;
         const minTop = 0;
         const maxTop = 700 - bird.clientHeight;
-
-
-// const minTop = 0;
-// const maxTop = 700 - bird.clientHeight;
-// ```
-
-// ### Explanation:
-
-// 1. **`const minTop = 0;`**:
-//    - This sets the minimum vertical position (`minTop`) for the bird to `0`. This means the bird cannot move above the top edge of the game area.
-
-// 2. **`const maxTop = 700 - bird.clientHeight;`**:
-//    - This sets the maximum vertical position (`maxTop`) for the bird to `700 - bird.clientHeight`.
-//    - `700` is the height of the game area (as defined in the CSS for `.game-play`).
-//    - `bird.clientHeight` is the height of the bird element.
-//    - By subtracting the bird's height from the game area's height,
-//       this ensures that the bird cannot move below the bottom edge of the game area.
-
-
 
         let isGameOver = false;
         let isPaused = false;
@@ -163,14 +140,7 @@ document.addEventListener('keydown', function(event) {
     
         document.addEventListener('keydown', function(event) {
             if (event.code === 'Space' && !isPaused && !isGameOver) {
-                const now = Date.now();
-                if(now-lastSpacePress <300){// Double space press within 300ms
-                    lift=Math.max(lift-0.02,minLift)
-                }else{
-                    lift= -2;
-                }
                 velocityY = lift; // Apply the lift when space is pressed
-                lastSpacePress = now;
             }
             if (event.code === 'KeyR' && isGameOver) {
                 restartGame(); // Restart the game if R is pressed and the game is over
