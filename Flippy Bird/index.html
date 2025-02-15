@@ -145,17 +145,29 @@
         let lift = -3.7;
         const minTop = 0;
         const maxTop = 700 - bird.clientHeight;
-
         let isGameOver = false;
         let isPaused = false;
-
         let passedPipes = 0;
         let loopCount = 0;
         let totalScore = 0;
         const scoreElementGamePlay = document.getElementById('score-game-play');
         const scoreElementGameOver = document.getElementById('score-game-over');
 
-        // Track animation iterations for each pipe
+        function controlMusic() {
+            if (isPaused || isGameOver) {
+                sound.pause();
+            } else {
+                sound.play();
+            }
+        }
+        
+        // Ensure sound starts only after user interaction
+        document.addEventListener('keydown', function(event) {
+            if (event.code === 'Space' && !isPaused && !isGameOver) {
+                sound.play(); // Start background music when the player starts moving
+            }
+        });
+// Track animation iterations for each pipe
 pipes.forEach(pipe => {
     pipe.addEventListener('animationiteration', () => {
         // Do nothing here; we control the loop count in the updateScore function
@@ -163,20 +175,16 @@ pipes.forEach(pipe => {
 });
 
 function updateScore() {
-    passedPipes++; // Increase score when a pipe is passed
+    passedPipes++; // Increase the number of pipes passed
 
-    // Every 10 pipes, increase loop count and add bonus to score
+    // Every 10 pipes, increment the loop count
     if (passedPipes % 10 === 0) {
-        loopCount++;  // Increment loop count after 10 pipes passed
+        loopCount++;  // Increment loop count after 10 pipes
         console.log(`Loop count: ${loopCount}`); // Log loop count after passing 10 pipes
     }
 
-    totalScore = passedPipes; // Base score is the number of pipes passed
-
-    // Optional: Add bonus points for subsequent rounds (after loop 1, loop 2, etc.)
-    if (loopCount > 1) {
-        totalScore += (loopCount - 1) * 10; // Adding 10 for each round after the first one
-    }
+    // Set total score to be equal to the loop count
+    totalScore = loopCount; // Now, total score is equal to the loop count
 
     // Update score display
     scoreElementGamePlay.innerText = "Score: " + totalScore;
