@@ -1,11 +1,179 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculator Khun Meas</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>3D Cube</title>
+  <style>
+    body {
+      display: flex;
+      margin: 0;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      overflow: hidden;
+    }
+    canvas {
+      width: 98vmin;
+      height: 98vmin;
+    }
+  </style>
 </head>
 <body>
-    
+  <canvas id="scene"></canvas>
+  <script>
+    const canvas = document.querySelector('#scene');
+    const ctx = canvas.getContext('2d');
+    canvas.width = canvas.clientWidth;
+    canvas.height = canvas.clientHeight;
+
+    if (window.devicePixelRatio > 1) {
+      canvas.width = canvas.clientWidth * 2;
+      canvas.height = canvas.clientHeight * 2;
+      ctx.scale(2, 2);
+    }
+
+    let width = canvas.clientWidth;
+    let height = canvas.clientHeight;
+    let rotationX = 0;
+    let rotationY = 0;
+    let isMouseDown = false;
+    let lastMouseX = 0;
+    let lastMouseY = 0;
+
+    const CUBE_SIZE = width * 0.5;
+    const SMALL_CUBE_SIZE = CUBE_SIZE * 0.5;
+    const PROJECTION_CENTER_X = width / 2;
+    const PROJECTION_CENTER_Y = height / 2;
+    const FIELD_OF_VIEW = width * 0.8;
+
+    class Dot {
+      constructor(x, y, z) {
+        this.x = x;
+        this.y = y;
+        this.z = z;
+        this.xProject = 0;
+        this.yProject = 0;
+        this.sizeProjection = 0;
+      }
+      project(sinX, cosX, sinY, cosY) {
+        const rotX = cosY * this.x + sinY * this.z;
+        const rotZ = -sinY * this.x + cosY * this.z;
+        const rotY = cosX * this.y - sinX * rotZ;
+        const rotZ2 = sinX * this.y + cosX * rotZ;
+        this.sizeProjection = FIELD_OF_VIEW / (FIELD_OF_VIEW - rotZ2);
+        this.xProject = (rotX * this.sizeProjection) + PROJECTION_CENTER_X;
+        this.yProject = (rotY * this.sizeProjection) + PROJECTION_CENTER_Y;
+      }
+      draw(sinX, cosX, sinY, cosY, color) {
+        this.project(sinX, cosX, sinY, cosY);
+        ctx.beginPath();
+        ctx.arc(this.xProject, this.yProject, 4 * this.sizeProjection, 0, Math.PI * 2);
+        ctx.closePath();
+        ctx.fillStyle = color;
+        ctx.fill();
+      }
+    }
+
+    class Cube {
+      constructor(size, color) {
+        this.size = size;
+        this.color = color;
+        this.vertices = [];
+        this.createVertices();
+      }
+      createVertices() {
+        const half = this.size / 2;
+        this.vertices = [
+          new Dot(-half, -half, -half),
+          new Dot(half, -half, -half),
+          new Dot(half, half, -half),
+          new Dot(-half, half, -half),
+          new Dot(-half, -half, half),
+          new Dot(half, -half, half),
+          new Dot(half, half, half),
+          new Dot(-half, half, half),
+        ];
+      }
+      draw(sinX, cosX, sinY, cosY) {
+        this.vertices.forEach(vertex => vertex.draw(sinX, cosX, sinY, cosY, this.color));
+        this.drawEdges(sinX, cosX, sinY, cosY);
+      }
+      drawEdges(sinX, cosX, sinY, cosY) {
+        const edges = [
+          [0, 1], [1, 2], [2, 3], [3, 0],
+          [4, 5], [5, 6], [6, 7], [7, 4],
+          [0, 4], [1, 5], [2, 6], [3, 7]
+        ];
+        ctx.strokeStyle = this.color;
+        edges.forEach(edge => {
+          const [start, end] = edge;
+          const startVertex = this.vertices[start];
+          const endVertex = this.vertices[end];
+          startVertex.project(sinX, cosX, sinY, cosY);
+          endVertex.project(sinX, cosX, sinY, cosY);
+          ctx.beginPath();
+          ctx.moveTo(startVertex.xProject, startVertex.yProject);
+          ctx.lineTo(endVertex.xProject, endVertex.yProject);
+          ctx.stroke();
+        });
+      }
+    }
+
+    function render() {
+      ctx.clearRect(0, 0, width, height);
+      const sineRotationX = Math.sin(rotationX);
+      const cosineRotationX = Math.cos(rotationX);
+      const sineRotationY = Math.sin(rotationY);
+      const cosineRotationY = Math.cos(rotationY);
+      cube.draw(sineRotationX, cosineRotationX, sineRotationY, cosineRotationY);
+      smallCube.draw(sineRotationX, cosineRotationX, sineRotationY, cosineRotationY);
+      requestAnimationFrame(render);
+    }
+
+    function onMouseMove(event) {
+      if (isMouseDown) {
+        let deltaX = event.clientX - lastMouseX;
+        let deltaY = event.clientY - lastMouseY;
+        rotationY += deltaX * 0.005;
+        rotationX += deltaY * 0.005;
+        lastMouseX = event.clientX;
+        lastMouseY = event.clientY;
+      }
+    }
+
+    function onMouseDown(event) {
+      isMouseDown = true;
+      lastMouseX = event.clientX;
+      lastMouseY = event.clientY;
+    }
+
+    function onMouseUp() {
+      isMouseDown = false;
+    }
+
+    function afterResize() {
+      width = canvas.offsetWidth;
+      height = canvas.offsetHeight;
+      if (window.devicePixelRatio > 1) {
+        canvas.width = canvas.clientWidth * 2;
+        canvas.height = canvas.clientHeight * 2;
+        ctx.scale(2, 2);
+      } else {
+        canvas.width = width;
+        canvas.height = height;
+      }
+      createCube();
+    }
+
+    window.addEventListener('resize', () => setTimeout(afterResize, 500));
+    canvas.addEventListener('mousedown', onMouseDown);
+    window.addEventListener('mousemove', onMouseMove);
+    window.addEventListener('mouseup', onMouseUp);
+
+    const cube = new Cube(CUBE_SIZE, 'black');
+    const smallCube = new Cube(SMALL_CUBE_SIZE, 'red');
+    requestAnimationFrame(render);
+  </script>
 </body>
 </html>

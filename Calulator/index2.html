@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2D Square and 3D Cube</title>
+    <style>
+        .square {
+            width: 100px;
+            height: 100px;
+            background-color: red;
+            margin: 20px;
+            animation: rotate2d 5s infinite linear;
+        }
+       body{
+        display: flex;
+        margin-top: 30%;
+        align-items: center;
+        justify-content: center;
+       }
+        .cube {
+            width: 100px;
+            height: 100px;
+            position: relative;
+            transform-style: preserve-3d;
+            transform: rotateX(-30deg) rotateY(-45deg);
+            margin: 50px;
+            animation: rotate 5s infinite linear;
+        }
+
+        .cube div {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            background: rgba(0, 128, 0, 0.5);
+            border: 1px solid #000;
+        }
+
+        .front  { transform: translateZ(50px); }
+        .back   { transform: rotateY(180deg) translateZ(50px); }
+        .right  { transform: rotateY(90deg) translateZ(50px); }
+        .left   { transform: rotateY(-90deg) translateZ(50px); }
+        .top    { transform: rotateX(90deg) translateZ(50px); }
+        .bottom { transform: rotateX(-90deg) translateZ(50px); }
+
+        @keyframes rotate {
+            from {
+                transform: rotateX(-30deg) rotateY(-45deg);
+            }
+            to {
+                transform: rotateX(-30deg) rotateY(315deg);
+            }
+        }
+
+        @keyframes rotate2d {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="square"></div>
+    <div class="cube">
+        <div class="front"></div>
+        <div class="back"></div>
+        <div class="right"></div>
+        <div class="left"></div>
+        <div class="top"></div>
+        <div class="bottom"></div>
+    </div>
+    <div class="circle"></div>
+    <div class="sphere">
+        <div class="front"></div>
+        <div class="back"></div>
+        <div class="right"></div>
+        <div class="left"></div>
+        <div class="top"></div>
+        <div class="bottom"></div>
+    </div></div>
+    <style>
+        .circle {
+            width: 100px;
+            height: 100px;
+            background-color: blue;
+            border-radius: 50%;
+            margin: 20px;
+            animation: rotate2d 5s infinite linear;
+        }
+
+        .sphere {
+            width: 100px;
+            height: 100px;
+            position: relative;
+            transform-style: preserve-3d;
+            transform: rotateX(-30deg) rotateY(-45deg);
+            margin: 50px;
+            animation: rotate 5s infinite linear;
+        }
+
+        .sphere div {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            background: rgba(0, 0, 255, 0.5);
+            border: 1px solid #000;
+            border-radius: 50%;
+        }
+
+        .sphere .front  { transform: translateZ(50px); }
+        .sphere .back   { transform: rotateY(180deg) translateZ(50px); }
+        .sphere .right  { transform: rotateY(90deg) translateZ(50px); }
+        .sphere .left   { transform: rotateY(-90deg) translateZ(50px); }
+        .sphere .top    { transform: rotateX(90deg) translateZ(50px); }
+        .sphere .bottom { transform: rotateX(-90deg) translateZ(50px); }
+
+        @keyframes rotate {
+            from {
+                transform: rotateX(-30deg) rotateY(-45deg);
+            }
+            to {
+                transform: rotateX(-30deg) rotateY(315deg);
+            }
+        }
+
+        @keyframes rotate2d {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+    </style>
+</body>
+</html>

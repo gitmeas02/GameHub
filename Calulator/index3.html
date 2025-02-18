@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rotating Square</title>
+    <style>
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background: #f4f4f4;
+        }
+        canvas {
+            background: white;
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas" width="400" height="400"></canvas>
+
+    <script>
+        const canvas = document.getElementById("canvas");
+        const ctx = canvas.getContext("2d");
+        
+        let angle = 0; // Rotation angle
+        const centerX = canvas.width / 2;
+        const centerY = canvas.height / 2;
+        const size = 50; // Square size
+
+        // Function to rotate a point around a center
+        function rotatePoint(x, y, angle, cx, cy) {
+            let radians = angle * (Math.PI / 180);
+            let cosA = Math.cos(radians);
+            let sinA = Math.sin(radians);
+
+            let newX = cx + (x - cx) * cosA - (y - cy) * sinA;
+            let newY = cy + (x - cx) * sinA + (y - cy) * cosA;
+
+            return { x: newX, y: newY };
+        }
+
+        function drawRotatingSquare() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear canvas
+
+            // Define the square corners before rotation
+            let points = [
+                { x: centerX - size, y: centerY - size },
+                { x: centerX + size, y: centerY - size },
+                { x: centerX + size, y: centerY + size },
+                { x: centerX - size, y: centerY + size }
+            ];
+
+            // Rotate each point
+            let rotatedPoints = points.map(p => rotatePoint(p.x, p.y, angle, centerX, centerY));
+
+            // Draw rotated square
+            ctx.beginPath();
+            ctx.moveTo(rotatedPoints[0].x, rotatedPoints[0].y);
+            rotatedPoints.forEach((p, index) => {
+                if (index > 0) ctx.lineTo(p.x, p.y);
+            });
+            ctx.closePath();
+            ctx.strokeStyle = "blue";
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            angle += 1; // Increase angle for rotation
+            requestAnimationFrame(drawRotatingSquare); // Animate
+        }
+
+        drawRotatingSquare();
+    </script>
+</body>
+</html>
