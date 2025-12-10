@@ -25,23 +25,19 @@
             width: 3.6rem;
             position: absolute;
             top: 50%;
-            left: 33%;
-            transform: translate(-50%, -50%);
+            left: 100px;
+            transform: translate(0, -50%);
         }
         .pipe {
             position: absolute;
             width: 3rem;
+            transition: transform 0.3s ease;
         }
         .pipe-top {
             top: 0;
-            right: -10%;
         }
         .pipe-bottom {
             bottom: 0;
-            right: -10%;
-        }
-        .pipe {
-            animation: movePipe 4.3s linear infinite;
         }
         .pause-menu, .game-over {
             display: none;
@@ -49,109 +45,256 @@
             top: 50%;
             left:50%;
             transform: translate(-50%,-50%);
-            background: rgba(0, 0, 0, 0.8);
+            background: rgba(0, 0, 0, 0.9);
             color: white;
-            padding: 20px;
+            padding: 30px;
             text-align: center;
+            border-radius: 15px;
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+        }
+        .level-display {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 28px;
+            color: #FFD700;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 12px 25px;
             border-radius: 10px;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+            border: 2px solid #FFD700;
         }
-        @keyframes movePipe {
-            0% {
-                left: 100%;
-            }
-            100% {
-                left: -65%;
-            }
+        .score {
+            font-size: 24px;
+            color: white;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-weight: bold;
         }
-        .pipe {
-    animation: movePipe 16s linear infinite;
-}
-@media (max-width: 1198px) {
-    @keyframes movePipe {
-        0% {
-            left: 150%;
+        .level-up-notification {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 48px;
+            color: #FFD700;
+            font-weight: bold;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.8);
+            animation: levelUpPulse 1s ease-in-out;
+            pointer-events: none;
+            z-index: 1000;
         }
-        100% {
-            left: -120%; /* Make sure pipes fully exit the screen */
+        @keyframes levelUpPulse {
+            0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
+            50% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(1); opacity: 0; }
         }
-    }
-
-    .pipe {
-        animation-duration: 10s; /* Adjust speed for smaller screens */
-    }
-}
-.score {
-    font-size: 24px;
-    color: white;
-    background: rgba(0, 0, 0, 0.5);
-    padding: 10px 20px;
-    border-radius: 10px;
-    font-weight: bold;
-}
+        button {
+            margin: 10px;
+            padding: 12px 30px;
+            font-size: 18px;
+            cursor: pointer;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
 
     </style>
     </style>
 </head>
 <body>
     <div class="game-play">
+        <div class="level-display" id="level-display">Level: 1</div>
         <div class="score" id="score-game-play"
         style="
-      
         font-size: 24px;
-        right: 0rem;
-        top:0rem;
-        /* transform: translate(-); */
+        right: 20px;
+        top: 20px;
+        position: absolute;
         color: white;
-        background: rgba(0, 0, 0, 0.5);
-        padding: 10px 20px;
+        background: rgba(0, 0, 0, 0.7);
+        padding: 12px 25px;
         border-radius: 10px;
         font-weight: bold;
-        ">
-        >Score: 0</div>
+        border: 2px solid white;
+        ">Score: 0</div>
+        <div class="level-up-notification" id="level-up-notification">LEVEL UP!</div>
         <img src="./img/Red_bird.png" alt="Bird" class="bird" id="bird">
-
-        <!-- Pipes -->
-        <img class="pipe pipe-top" src="./img/PipeGreen.png" alt="" style="height: 17rem;">
-        <img class="pipe pipe-bottom" src="./img/PipRed.png" alt="" style="height: 14rem;">
-        <img class="pipe pipe-top" src="./img/PipeGreen.png" alt="" style="height: 15rem; margin-left: 220px;">
-        <img class="pipe pipe-bottom" src="./img/PipRed.png" alt="" style="height: 14rem; margin-left: 210px;">
-        <img class="pipe pipe-top" src="./img/PipeGreen.png" alt="" style="height: 17rem; margin-left: 420px;">
-        <img class="pipe pipe-bottom" src="./img/PipRed.png" alt="" style="height: 14rem; margin-left: 410px;">
-        <img class="pipe pipe-top" src="./img/PipeGreen.png" alt="" style="height: 17rem; margin-left: 610px;">
-        <img class="pipe pipe-bottom" src="./img/PipRed.png" alt="" style="height: 14rem; margin-left: 610px;">
-        <img class="pipe pipe-top" src="./img/PipeGreen.png" alt="" style="height: 11rem; margin-left: 820px;">
-        <img class="pipe pipe-bottom" src="./img/PipRed.png" alt="" style="height: 14rem; margin-left: 810px;">
-        <img class="pipe pipe-top" src="./img/PipeGreen.png" alt="" style="height: 17rem; margin-left: 1020px;">
-        <img class="pipe pipe-bottom" src="./img/PipRed.png" alt="" style="height: 14rem; margin-left: 1010px;">
+        <!-- Pipes will be generated dynamically -->
+        <div id="pipe-container"></div>
     </div>
     <div class="pause-menu">
-        <p>Game Paused</p>
-        <button id="continue-btn">Continue</button>
-        <button id="exit-btn">Exit</button>
+        <h2 style="margin-top: 0;">⏸️ Game Paused</h2>
+        <p style="font-size: 18px;">Level: <span id="pause-level">1</span> | Score: <span id="pause-score">0</span></p>
+        <button id="continue-btn">Continue (C)</button>
+        <button id="exit-btn">Exit (E)</button>
     </div>
     <div class="game-over">
-        <div class="score" id="score-game-over">Score: 0</div>
-        Game Over! Press <span id="restart-text">R</span> to Restart or <span id="exit-text">E</span> to Exit
+        <h2 style="margin-top: 0;">💀 Game Over!</h2>
+        <div style="font-size: 22px; margin: 20px 0;">
+            <p>Level Reached: <span id="final-level" style="color: #FFD700;">1</span></p>
+            <p>Final Score: <span id="score-game-over" style="color: #FFD700;">0</span></p>
+        </div>
+        <p style="font-size: 16px;">Press <span style="color: #FFD700; font-weight: bold;">R</span> to Restart or <span style="color: #FFD700; font-weight: bold;">E</span> to Exit</p>
     </div>
     <audio id="background-music" src="./youtube_vJwKKKd2ZYE_audio.mp3" loop></audio>
     <script>
         const sound = document.getElementById('background-music');
         const bird = document.querySelector('.bird');
-        const pipes = document.querySelectorAll('.pipe');
+        const pipeContainer = document.getElementById('pipe-container');
         let birdTop = window.innerHeight / 2;
+        let birdLeft = 100; // Horizontal position
         let velocityY = 0;
+        let velocityX = 0;
         const gravity = 0.13;
         let currentGravity = gravity;
         let lift = -3.7;
+        let forwardSpeed = 2; // Speed when moving right
+        let downwardSpeed = 4; // Speed when moving down
+        let upwardSpeed = 2.5; // Speed when moving up
         const minTop = 0;
         const maxTop = 700 - bird.clientHeight;
+        const minLeft = 0;
+        const maxLeft = window.innerWidth - bird.clientWidth;
         let isGameOver = false;
         let isPaused = false;
-        let passedPipes = 0;
-        let loopCount = 0;
-        let totalScore = 0;
+        let score = 0;
+        let currentLevel = 1;
+        let pipesPassedInLevel = 0;
+        let baseSpeed = 3000; // Base animation duration in ms
+        let currentSpeed = baseSpeed;
+        let pipes = [];
+        let pipeGenerationInterval;
+        let lastPipeTime = 0;
+        const pipeSpacing = 800; // Time between pipes in ms (reduced for closer pipes)
+        
+        // Key state tracking
+        let keysPressed = {
+            right: false,
+            down: false,
+            up: false
+        };
+        
         const scoreElementGamePlay = document.getElementById('score-game-play');
         const scoreElementGameOver = document.getElementById('score-game-over');
+        const levelDisplay = document.getElementById('level-display');
+        const levelUpNotification = document.getElementById('level-up-notification');
+
+        // Pipe configuration
+        const minGap = 180; // Minimum gap between top and bottom pipes
+        const maxGap = 250; // Maximum gap
+        const minPipeHeight = 100;
+        const maxPipeHeight = 400;
+
+        function generateRandomPipe() {
+            const pipeSet = document.createElement('div');
+            pipeSet.className = 'pipe-set';
+            pipeSet.style.position = 'absolute';
+            pipeSet.style.right = '-100px';
+            pipeSet.style.width = '3rem';
+            pipeSet.style.height = '100%';
+            
+            // Random gap size
+            const gap = minGap + Math.random() * (maxGap - minGap);
+            
+            // Random position for the gap
+            const gapPosition = minPipeHeight + Math.random() * (500 - minPipeHeight - gap);
+            
+            // Create top pipe
+            const topPipe = document.createElement('img');
+            topPipe.src = './img/PipeGreen.png';
+            topPipe.className = 'pipe pipe-top';
+            topPipe.style.height = gapPosition + 'px';
+            topPipe.style.position = 'absolute';
+            topPipe.style.top = '0';
+            topPipe.style.width = '100%';
+            
+            // Create bottom pipe
+            const bottomPipe = document.createElement('img');
+            bottomPipe.src = './img/PipRed.png';
+            bottomPipe.className = 'pipe pipe-bottom';
+            const bottomHeight = 700 - gapPosition - gap;
+            bottomPipe.style.height = bottomHeight + 'px';
+            bottomPipe.style.position = 'absolute';
+            bottomPipe.style.bottom = '0';
+            bottomPipe.style.width = '100%';
+            
+            pipeSet.appendChild(topPipe);
+            pipeSet.appendChild(bottomPipe);
+            pipeSet.scored = false;
+            pipeSet.topPipe = topPipe;
+            pipeSet.bottomPipe = bottomPipe;
+            
+            pipeContainer.appendChild(pipeSet);
+            pipes.push(pipeSet);
+            
+            return pipeSet;
+        }
+
+        function movePipes(deltaTime) {
+            const speed = (window.innerWidth / currentSpeed) * deltaTime;
+            
+            pipes.forEach((pipeSet, index) => {
+                let currentRight = parseFloat(pipeSet.style.right) || -100;
+                currentRight += speed;
+                pipeSet.style.right = currentRight + 'px';
+                
+                // Remove pipes that are off screen
+                if (currentRight > window.innerWidth + 100) {
+                    pipeContainer.removeChild(pipeSet);
+                    pipes.splice(index, 1);
+                }
+                
+                // Check if bird passed the pipe
+                const birdRect = bird.getBoundingClientRect();
+                const pipeRect = pipeSet.getBoundingClientRect();
+                
+                if (!pipeSet.scored && birdRect.left > pipeRect.left + pipeRect.width) {
+                    pipeSet.scored = true;
+                    incrementScore();
+                }
+            });
+        }
+
+        function incrementScore() {
+            score++;
+            pipesPassedInLevel++;
+            scoreElementGamePlay.innerText = "Score: " + score;
+            
+            // Level up every 5 pipes
+            if (pipesPassedInLevel >= 5) {
+                levelUp();
+            }
+        }
+
+        function levelUp() {
+            currentLevel++;
+            pipesPassedInLevel = 0;
+            
+            // Increase speed (reduce animation duration)
+            currentSpeed = Math.max(1500, baseSpeed - (currentLevel - 1) * 150);
+            
+            // Increase gravity slightly
+            currentGravity = gravity + (currentLevel - 1) * 0.015;
+            
+            // Show level up notification
+            levelDisplay.innerText = "Level: " + currentLevel;
+            levelUpNotification.style.display = 'block';
+            levelUpNotification.innerText = "LEVEL " + currentLevel + "!";
+            
+            setTimeout(() => {
+                levelUpNotification.style.display = 'none';
+            }, 1000);
+        }
 
         function controlMusic() {
             if (isPaused || isGameOver) {
@@ -164,75 +307,114 @@
         // Ensure sound starts only after user interaction
         document.addEventListener('keydown', function(event) {
             if (event.code === 'Space' && !isPaused && !isGameOver) {
-                sound.play(); // Start background music when the player starts moving
+                sound.play();
             }
         });
-// Track animation iterations for each pipe
-pipes.forEach(pipe => {
-    pipe.addEventListener('animationiteration', () => {
-        // Do nothing here; we control the loop count in the updateScore function
-    });
-});
 
-function updateScore() {
-    passedPipes++; // Increase the number of pipes passed
-
-    // Every 10 pipes, increment the loop count
-    if (passedPipes % 10 === 0) {
-        loopCount++;  // Increment loop count after 10 pipes
-        console.log(`Loop count: ${loopCount}`); // Log loop count after passing 10 pipes
-    }
-
-    // Set total score to be equal to the loop count
-    totalScore = loopCount; // Now, total score is equal to the loop count
-
-    // Update score display
-    scoreElementGamePlay.innerText = "Score: " + totalScore;
-    scoreElementGameOver.innerText = "Score: " + totalScore;
-}
         function applyGravity() {
-            velocityY += currentGravity; // Apply gravity to the vertical velocity
-            birdTop += velocityY; // Update bird's vertical position based on velocityY
+            velocityY += currentGravity;
+            birdTop += velocityY;
+            
+            // Apply horizontal movement
+            if (keysPressed.right) {
+                birdLeft += forwardSpeed;
+            }
+            
+            // Apply upward movement (hold up key for controlled rise)
+            if (keysPressed.up) {
+                birdTop -= upwardSpeed;
+            }
+            
+            // Apply downward movement (hold down key for faster fall)
+            if (keysPressed.down) {
+                birdTop += downwardSpeed;
+            }
 
-            if (birdTop >= maxTop) { // Prevent the bird from going below the ground
+            // Horizontal boundaries
+            if (birdLeft >= maxLeft) {
+                birdLeft = maxLeft;
+            } else if (birdLeft <= minLeft) {
+                birdLeft = minLeft;
+            }
+
+            if (birdTop >= maxTop) {
                 birdTop = maxTop;
-                velocityY = 0; // Stop falling if we reach the bottom
-                gameOver(); // Trigger game over if the bird hits the bottom
-            } else if (birdTop <= minTop) { // Prevent the bird from going above the screen
+                velocityY = 0;
+                gameOver();
+            } else if (birdTop <= minTop) {
                 birdTop = minTop;
-                velocityY = 0; // Stop upwards movement if we reach the top
+                velocityY = 0;
             }
         }
 
-        function updatePosition() {
+        let lastFrameTime = performance.now();
+        
+        function updatePosition(currentTime) {
             if (!isPaused && !isGameOver) {
+                const deltaTime = currentTime - lastFrameTime;
+                lastFrameTime = currentTime;
+                
                 bird.style.top = birdTop + 'px';
+                bird.style.left = birdLeft + 'px';
                 applyGravity();
+                movePipes(deltaTime);
                 checkCollision();
-                updateScore();
-                requestAnimationFrame(updatePosition); // Keep updating the position for smooth animation
+                
+                // Generate new pipes
+                if (currentTime - lastPipeTime > pipeSpacing) {
+                    generateRandomPipe();
+                    lastPipeTime = currentTime;
+                }
+                
+                requestAnimationFrame(updatePosition);
             }
         }
 
         document.addEventListener('keydown', function (event) {
             if (event.code === 'Space' && !isPaused && !isGameOver) {
-                velocityY = lift; // Apply the lift when space is pressed
+                velocityY = lift;
+            }
+            if (event.code === 'ArrowRight' || event.code === 'KeyD') {
+                keysPressed.right = true;
+            }
+            if (event.code === 'ArrowUp' || event.code === 'KeyW') {
+                keysPressed.up = true;
+            }
+            if (event.code === 'ArrowDown' || event.code === 'KeyS') {
+                keysPressed.down = true;
             }
             if (event.code === 'KeyR' && isGameOver) {
-                restartGame(); // Restart the game if R is pressed and the game is over
+                restartGame();
             }
             if (event.code === 'KeyP') {
-                togglePause(); // Toggle pause when P is pressed
+                togglePause();
             }
             if (event.code === 'KeyC' && isPaused) {
-                togglePause(); // Toggle pause when C is pressed
+                togglePause();
+            }
+            if (event.code === 'KeyE' && (isPaused || isGameOver)) {
+                // Exit logic - could reload or redirect
+                location.reload();
+            }
+        });
+
+        document.addEventListener('keyup', function (event) {
+            if (event.code === 'ArrowRight' || event.code === 'KeyD') {
+                keysPressed.right = false;
+            }
+            if (event.code === 'ArrowUp' || event.code === 'KeyW') {
+                keysPressed.up = false;
+            }
+            if (event.code === 'ArrowDown' || event.code === 'KeyS') {
+                keysPressed.down = false;
             }
         });
 
         function gameOver() {
             isGameOver = true;
             document.querySelector('.game-over').style.display = 'block';
-            stopPipes(); // Stop pipes when game is over
+            document.getElementById('final-level').innerText = currentLevel;
+            document.getElementById('score-game-over').innerText = score;
             controlMusic();
         }
 
@@ -240,94 +422,90 @@ function updateScore() {
             if (isPaused) {
                 isPaused = false;
                 document.querySelector('.pause-menu').style.display = 'none';
-                requestAnimationFrame(updatePosition); // Resume the game and bird's movement
-                startPipes(); // Resume pipes animation
+                lastFrameTime = performance.now();
+                requestAnimationFrame(updatePosition);
             } else {
                 isPaused = true;
                 document.querySelector('.pause-menu').style.display = 'block';
-                stopPipes(); // Stop pipes and bird movement when paused
+                document.getElementById('pause-level').innerText = currentLevel;
+                document.getElementById('pause-score').innerText = score;
                 controlMusic();
             }
         }
 
         function restartGame() {
             isGameOver = false;
-            birdTop = window.innerHeight / 2; // Reset bird to center vertically
-            velocityY = 0; // Reset bird's vertical speed
-            currentGravity = gravity; // Reset gravity
-            passedPipes = 0;  // Reset pipes passed
-            loopCount = 0;     // Reset loop count
-            totalScore = 0;    // Reset total score
+            isPaused = false;
+            birdTop = window.innerHeight / 2;
+            birdLeft = 100;
+            velocityY = 0;
+            velocityX = 0;
+            currentGravity = gravity;
+            score = 0;
+            currentLevel = 1;
+            pipesPassedInLevel = 0;
+            currentSpeed = baseSpeed;
+            lastPipeTime = 0;
+            keysPressed.right = false;
+            keysPressed.down = false;
+            keysPressed.up = false;
+            
             scoreElementGamePlay.innerText = "Score: 0";
-            scoreElementGameOver.innerText = "Score: 0";
+            levelDisplay.innerText = "Level: 1";
             document.querySelector('.game-over').style.display = 'none';
-
-            resetPipes(); // Reset pipe positions
-            applyGravity(); // Restart gravity effect
+            
+            // Clear all pipes
+            pipes.forEach(pipe => pipeContainer.removeChild(pipe));
+            pipes = [];
+            
+            lastFrameTime = performance.now();
             requestAnimationFrame(updatePosition);
-            controlMusic(); // Resume bird movement
-        }
-
-        function resetPipes() {
-            pipes.forEach(pipe => {
-                pipe.style.animation = 'none'; // Stop animation temporarily
-                pipe.offsetHeight; // Trigger reflow to restart animation
-                pipe.style.animation = null; // Restart animation
-                pipe.scored = false; // Reset the scored flag
-            });
-        }
-
-        function stopPipes() {
-            pipes.forEach(pipe => {
-                pipe.style.animationPlayState = 'paused'; // Pause pipe animations when paused
-            });
-        }
-
-        function startPipes() {
-            pipes.forEach(pipe => {
-                pipe.style.animationPlayState = 'running'; // Resume pipe animations when continuing
-            });
+            controlMusic();
         }
 
         function checkCollision() {
             const birdRect = bird.getBoundingClientRect();
-            let passedPipe = false;
 
-            pipes.forEach(pipe => {
-                const pipeRect = pipe.getBoundingClientRect();
+            for (let pipeSet of pipes) {
+                const topPipeRect = pipeSet.topPipe.getBoundingClientRect();
+                const bottomPipeRect = pipeSet.bottomPipe.getBoundingClientRect();
+                
+                // Check collision with top pipe
                 if (
-                    birdRect.left < pipeRect.left + pipeRect.width &&
-                    birdRect.left + birdRect.width > pipeRect.left &&
-                    birdRect.top < pipeRect.top + pipeRect.height &&
-                    birdRect.top + birdRect.height > pipeRect.top
+                    birdRect.left < topPipeRect.left + topPipeRect.width &&
+                    birdRect.left + birdRect.width > topPipeRect.left &&
+                    birdRect.top < topPipeRect.top + topPipeRect.height &&
+                    birdRect.top + birdRect.height > topPipeRect.top
                 ) {
-                    gameOver(); // Trigger game over if collision occurs
+                    gameOver();
                     return true;
                 }
-
-                if (!pipe.scored && birdRect.left > pipeRect.left + pipeRect.width) {
-                    pipe.scored = true;
-                    passedPipe = true;
+                
+                // Check collision with bottom pipe
+                if (
+                    birdRect.left < bottomPipeRect.left + bottomPipeRect.width &&
+                    birdRect.left + birdRect.width > bottomPipeRect.left &&
+                    birdRect.top < bottomPipeRect.top + bottomPipeRect.height &&
+                    birdRect.top + birdRect.height > bottomPipeRect.top
+                ) {
+                    gameOver();
+                    return true;
                 }
-            });
-
-            if (passedPipe) {
-                updateScore();
             }
 
             return false;
         }
 
-        // Start the smooth animation loop
+        // Start the game
+        lastFrameTime = performance.now();
         requestAnimationFrame(updatePosition);
 
         // Event listeners for pause menu buttons
         document.getElementById('continue-btn').addEventListener('click', function () {
-            togglePause(); // Toggle pause when continue button is pressed
+            togglePause();
         });
         document.getElementById('exit-btn').addEventListener('click', function () {
-            // Handle exit logic here
-            console.log("Exit game logic here");
+            location.reload();
         });
     </script>
 </body>
