@@ -2,13 +2,14 @@
     "version": "2.0.0",
     "tasks": [
         {
-        "label": "Khun System Building ....",
-        "type": "shell",
-        "command": "${workspaceFolder}/build.bat",
-        "group": {
-            "kind": "build",
-            "isDefault": true
-        }
+            "label": "Build Vulkan",
+            "type": "shell",
+            "command": "${workspaceFolder}/build.bat",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
         }
     ]
 }
